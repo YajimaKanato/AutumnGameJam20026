@@ -110,6 +110,5 @@ InitTestScene*.unity*
 /[Aa]ssets/Ignore
 Assets/Plugins/
 Assets/Resources/
-Assets/TextMesh Pro/
 /Packages/nuget-packages/InstalledPackages*
 Packages/nuget-packages/
