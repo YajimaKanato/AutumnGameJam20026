@@ -1,24 +1,26 @@
 using UnityEngine;
-using Aizawa;
 using UnityEngine.UI;
 
-/// <summary>
-/// タイトルシーンのマネージャークラス
-/// </summary>
-public class TitleManager : MonoBehaviour
+namespace Aizawa
 {
-    /// <summary> 名前の入力欄 </summary>
-    [SerializeField]
-    private InputField _nameField;
-
     /// <summary>
-    /// 名前を決定してインゲームに入る
+    /// タイトルシーンのマネージャークラス
     /// </summary>
-    public async void StartGame()
+    public class TitleManager : MonoBehaviour
     {
-        if(ScoreManager.SetPlayer(_nameField.text))
+        /// <summary> 名前の入力欄 </summary>
+        [SerializeField]
+        private InputField _nameField;
+
+        /// <summary>
+        /// 名前を決定してインゲームに入る
+        /// </summary>
+        public async void StartGame()
         {
-            await SceneTransitionManager.TransitionScene(Scene.Ingame);
+            if(ScoreManager.SetPlayer(_nameField.text))
+            {
+                await SceneTransitionManager.TransitionScene(Scene.Ingame);
+            }
         }
     }
 }
