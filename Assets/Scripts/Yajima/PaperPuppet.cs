@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Yajima
 {
-    public class PaperPuppet : MonoBehaviour
+    public class PaperPuppet : IngameBehaviour
     {
         [Header("移動演出")]
         [SerializeField] float _moveRotateSpeed = 0.5f;
@@ -34,7 +34,7 @@ namespace Yajima
             _initialRotation = transform.localRotation;
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
             _moveTween?.Kill();
             _moveUpTween?.Kill();
@@ -44,10 +44,13 @@ namespace Yajima
             _facingRight = true;
             transform.localPosition = _initialPosition;
             transform.localRotation = _initialRotation;
+            base.OnDisable();
         }
 
         public void Move(bool isMoving, bool facingRight)
         {
+            if (IsStopped) return;
+
             Move(isMoving);
 
             if (_interactTween != null || _facingRight == facingRight) return;
@@ -64,7 +67,7 @@ namespace Yajima
 
         public void Move(bool isMoving)
         {
-            if (isMoving && _moveUpTween == null)
+            if (!IsStopped && isMoving && _moveUpTween == null)
             {
                 _moveUpTween = DOTween.To(() => _moveUpHeight, height =>
                     {
@@ -88,7 +91,7 @@ namespace Yajima
 
         public Tween Interact(float angle)
         {
-            if (_moveTween != null || _interactTween != null) return null;
+            if (IsStopped || _moveTween != null || _interactTween != null) return null;
 
             float targetAngle = _turnAngle + angle;
             var sequence = DOTween.Sequence().SetUpdate(UpdateType.Fixed);
@@ -115,6 +118,20 @@ namespace Yajima
         {
             _turnAngle = angle;
             transform.localRotation = Quaternion.AngleAxis(angle, Vector3.up) * _initialRotation;
+        }
+
+        protected override void OnPaused()
+        {
+            _moveTween?.Pause();
+            _moveUpTween?.Pause();
+            _interactTween?.Pause();
+        }
+
+        protected override void OnResumed()
+        {
+            _moveTween?.Play();
+            _moveUpTween?.Play();
+            _interactTween?.Play();
         }
     }
 }

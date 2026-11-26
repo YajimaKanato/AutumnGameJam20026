@@ -5,7 +5,7 @@ using UnityEngine.Splines;
 
 namespace Yajima
 {
-    public class Unfinished : MonoBehaviour
+    public class Unfinished : IngameBehaviour
     {
         [Header("初期値")]
         [SerializeField] int _score = 100;
@@ -25,20 +25,22 @@ namespace Yajima
         public event Action OnEntry;
         public event Action<Unfinished> OnExit;
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
             _previousPosition = transform.position;
             _interacted = false;
+            base.OnEnable();
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
             _entered = false;
+            base.OnDisable();
         }
 
         private void Update()
         {
-            if (!_entered || _interacted) return;
+            if (IsStopped || !_entered || _interacted) return;
 
             _lifeRemaining -= Time.deltaTime;
             if (_lifeRemaining <= 0f)
@@ -63,6 +65,8 @@ namespace Yajima
 
         void MovePerform()
         {
+            if (IsStopped) return;
+
             var position = transform.position;
             var isMoving = position.x != _previousPosition.x || position.z != _previousPosition.z;
             _previousPosition = position;
@@ -112,7 +116,7 @@ namespace Yajima
 
         public virtual void InteractExit(Player player)
         {
-            if (_interacted) return;
+            if (IsStopped || _interacted) return;
 
             var turn = Turn(player);
             turn?.OnComplete(Exit);
@@ -132,11 +136,12 @@ namespace Yajima
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!isActiveAndEnabled || _interacted) return;
+            if (!isActiveAndEnabled || IsStopped || _interacted) return;
 
             var player = other.GetComponentInParent<Player>();
             if (player == null || !player.IsInteractCollider(other)) return;
             InteractExit(player);
         }
+
     }
 }

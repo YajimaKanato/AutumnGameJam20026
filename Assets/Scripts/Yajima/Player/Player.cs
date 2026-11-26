@@ -1,12 +1,12 @@
 using DG.Tweening;
-using System;
+using R3;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Yajima
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class Player : MonoBehaviour
+    public class Player : IngameBehaviour
     {
         [Header("移動速度")]
         [SerializeField] float _speed = 2f;
@@ -26,17 +26,20 @@ namespace Yajima
         Vector3 _direction;
         float _playerForward = 1;
         bool _interacted;
-        bool _lightMoved;
-        bool _openedMenu;
+        bool _isPause;
+        RigidbodyConstraints _constraintsBeforePause;
+        float _verticalVelocityBeforePause;
 
-        public event Action<bool> OnLightMove;
-        public event Action<bool> OnOpenMenu;
+        readonly ReactiveProperty<bool> _lightMoved = new(false);
+        public ReadOnlyReactiveProperty<bool> LightMove => _lightMoved;
+        readonly ReactiveProperty<bool> _openedMenu = new(false);
+        public ReadOnlyReactiveProperty<bool> OpenedMenu => _openedMenu;
 
         public bool IsFacingRight => _playerForward > 0f;
 
         public bool IsInteractCollider(Collider collider)
         {
-            return isActiveAndEnabled && collider != null && collider == _interactCollider && collider.enabled;
+            return isActiveAndEnabled && !_isPause && collider != null && collider == _interactCollider && collider.enabled;
         }
 
         private void Awake()
@@ -61,32 +64,43 @@ namespace Yajima
                 _interactCollider.isTrigger = true;
                 ((BoxCollider)_interactCollider).size = new Vector3(1, 0.1f, 1) * _interactScale;
             }
+
+            _isPause = false;
         }
 
-        private void OnDisable()
+        protected override void OnEnable()
+        {
+            IngameManager.RegisterObj(this);
+        }
+
+        protected override void OnDisable()
         {
             _interactColliderTimer?.Kill();
             _interactColliderTimer = null;
             if (_interactCollider != null)
                 _interactCollider.enabled = false;
+            IngameManager.UnregisterObj(this);
+            Resume();
         }
 
         private void Update()
         {
+            OpenMenu();
+            if (_isPause) return;
+
             MoveInput();
             InteractInput();
             LightMoveInput();
-            OpenMenu();
         }
 
         private void FixedUpdate()
         {
-            Move();
+            if (!_isPause) Move();
         }
 
         private void LateUpdate()
         {
-            if (_paperPuppet == null || !_paperPuppet.isActiveAndEnabled) return;
+            if (_isPause || _paperPuppet == null || !_paperPuppet.isActiveAndEnabled) return;
 
             var velocity = _rb.linearVelocity;
             _paperPuppet.Move(velocity.x != 0f || velocity.z != 0f, IsFacingRight);
@@ -133,25 +147,13 @@ namespace Yajima
 
         void LightMoveInput()
         {
-            _lightMoved = _lightMove.IsPressed();
-            if (_lightMove.WasPressedThisFrame())
-            {
-                OnLightMove?.Invoke(true);
-            }
-
-            if (_lightMove.WasReleasedThisFrame())
-            {
-                OnLightMove?.Invoke(false);
-            }
+            _lightMoved.Value = _lightMove.IsPressed();
         }
 
         void OpenMenu()
         {
             if (_menu.WasPressedThisFrame())
-            {
-                _openedMenu = !_openedMenu;
-                OnOpenMenu?.Invoke(_openedMenu);
-            }
+                _openedMenu.Value = !_openedMenu.Value;
         }
         #endregion
 
@@ -159,9 +161,33 @@ namespace Yajima
         void Move()
         {
             // 光速移動かどうかで速度変える
-            var velocity = _direction * (_lightMoved ? _lightMoveSpeed : _speed);
+            var velocity = _direction * (_lightMoved.Value ? _lightMoveSpeed : _speed);
             velocity.y = _rb.linearVelocity.y;
             _rb.linearVelocity = velocity;
+        }
+
+        protected override void OnPaused()
+        {
+            if (_isPause) return;
+
+            _isPause = true;
+            _direction = Vector3.zero;
+            _interacted = false;
+            _interactColliderTimer?.Pause();
+            _constraintsBeforePause = _rb.constraints;
+            _verticalVelocityBeforePause = _rb.linearVelocity.y;
+            _rb.linearVelocity = Vector3.zero;
+            _rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
+
+        protected override void OnResumed()
+        {
+            if (!_isPause) return;
+
+            _isPause = false;
+            _rb.constraints = _constraintsBeforePause;
+            _rb.linearVelocity = Vector3.up * _verticalVelocityBeforePause;
+            _interactColliderTimer?.Play();
         }
         #endregion
     }
