@@ -7,7 +7,6 @@ namespace Kato
     [System.Serializable]
     public class ClipData
     {
-        public string id;
         public AudioClip clip;
         public ClipType type;
     }
