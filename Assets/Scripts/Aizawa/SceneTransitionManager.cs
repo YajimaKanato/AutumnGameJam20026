@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,7 +13,7 @@ namespace Aizawa
         /// 指定したシーンに遷移する
         /// </summary>
         /// <param name="scene">遷移先のシーン</param>
-        public static async void TransitionScene(Scene scene)
+        public static async Task TransitionScene(Scene scene)
         {
             await SceneManager.LoadSceneAsync(scene.ToString());
         }
