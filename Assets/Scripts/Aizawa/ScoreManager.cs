@@ -22,17 +22,27 @@ namespace Aizawa
         /// 新たなプレイヤーを登録する
         /// </summary>
         /// <param name="name">プレイヤー名</param>
-        public static void SetPlayer(string name)
+        /// <returns>登録できたか</returns>
+        public static bool SetPlayer(string name)
         {
             //ランキングに含まれていた場合省く
             if(_ranking.ContainsKey(name))
             {
                 Debug.Log("その名前は登録済みです。");
-                return;
+                return false;
+            }
+
+            //名前が空欄か空文字のみでも省く
+            if(string.IsNullOrWhiteSpace(name))
+            {
+                Debug.Log("名前が不正です。");
+                return false;
             }
 
             CurrentName = name;
             CurrentScore = 0;
+
+            return true;
         }
 
         /// <summary>
