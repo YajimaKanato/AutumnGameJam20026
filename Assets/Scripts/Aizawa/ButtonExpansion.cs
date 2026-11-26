@@ -10,7 +10,7 @@ namespace Aizawa
     /// <para>ボタンのUIオブジェクトに後付けするだけで良い</para>
     /// </summary>
     [RequireComponent(typeof(Button))]
-    public class ButtonExpansion : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class ButtonExpansion : MonoBehaviour
     {
         /// <summary> 未選択時の画像 </summary>
         [SerializeField]
@@ -26,39 +26,19 @@ namespace Aizawa
         private bool _isKeyboardControlle;
 
         private Button _button;
-        private InputAction _buttonSelectingAction = new("ButtonSelect", InputActionType.Button);
 
         void Start()
         {
             _button = GetComponent<Button>();
 
-            //上下左右を一つのInputActionにまとめる
-            //あとでInputSystem_Actionsに突っ込むかも
-            _buttonSelectingAction.AddBinding("<Keyboard>/upArrow");
-            _buttonSelectingAction.AddBinding("<Keyboard>/downArrow");
-            _buttonSelectingAction.AddBinding("<Keyboard>/rightArrow");
-            _buttonSelectingAction.AddBinding("<Keyboard>/leftArrow");
-            _buttonSelectingAction.Enable();
-        }
-
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            //マウス選択モードのみ
-            if(!_isKeyboardControlle)
-            {
-                //フォーカスされたら選択時の画像に
-                _button.image.sprite = _selected;
-            }
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            //マウス選択モードのみ
-            if(!_isKeyboardControlle)
-            {
-                //フォーカスが取れたら未選択時の画像に
-                _button.image.sprite = _notSelected;
-            }
+            //画像をアサインする
+            _button.transition = Selectable.Transition.SpriteSwap;
+            var sprites = _button.spriteState;
+            sprites.disabledSprite = _notSelected;
+            sprites.pressedSprite = _selected;
+            sprites.highlightedSprite = _selected;
+            _button.spriteState = sprites;
+            ChangeSpriteSet();
         }
 
         void Update()
@@ -71,25 +51,21 @@ namespace Aizawa
                 {
                     _isKeyboardControlle = false;
                     EventSystem.current.SetSelectedGameObject(null);
-                }
 
-                //このボタンが選択中なら選択中の画像、そうでなければ未選択時の画像にする
-                if(EventSystem.current.currentSelectedGameObject == gameObject)
-                {
-                    _button.image.sprite = _selected;
-                }
-                else
-                {
-                    _button.image.sprite = _notSelected;
+                    //選択モードに合わせて画像セットを変更する
+                    ChangeSpriteSet();
                 }
             }
             //マウス選択モードのみ
             else
             {
-                //上下左右どれかが押されたらキーボード選択モードに移行
-                if(_buttonSelectingAction.WasPressedThisFrame())
+                //何らかのキーボードが押されたらキーボード操作モードへ移行
+                if(Keyboard.current.anyKey.wasPressedThisFrame)
                 {
                     _isKeyboardControlle = true;
+
+                    //選択モードに合わせて画像セットを変更する
+                    ChangeSpriteSet();
 
                     //これが最初に選択される設定なら、選択状態にしておく
                     if(_isFirstSelecting)
@@ -99,5 +75,15 @@ namespace Aizawa
                 }
             }
         }
-}
+
+        /// <summary>
+        /// 現在の操作モードに合わせて、選択時の画像を変更する
+        /// </summary>
+        private void ChangeSpriteSet()
+        {
+            var sprites = _button.spriteState;
+            sprites.selectedSprite = _isKeyboardControlle ? _selected : _notSelected;
+            _button.spriteState = sprites;
+        }
+    }
 }
