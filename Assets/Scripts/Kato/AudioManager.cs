@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Kato
 {
@@ -21,11 +22,14 @@ namespace Kato
     public class AudioManager : MonoBehaviour
     {
         [SerializeField, Header("AudioClip設定")] private ClipData[] _clip;
-        [SerializeField] AudioSource[] audioSources;
+        [SerializeField] private AudioSource[] _audioSources;
+        [Header("======音量調節用スライダー======")]
+        [SerializeField] private Slider _bgmSlider;
+        [SerializeField] private Slider _seSlider;
 
         private Dictionary<string, ClipData> _dict;
 
-        static AudioManager instance { get; set; }
+        public static AudioManager instance { get; set; }
 
         private void Awake()
         {
@@ -70,9 +74,10 @@ namespace Kato
         /// Audio再生
         /// </summary>
         /// <param name="id"></param>
-        public void PlayAudio(string id)
+        public void Play(string id)
         {
-            AudioSource source = audioSources[(int)GetClip(id).type];
+            AudioSource source = _audioSources[(int)GetClip(id).type];
+            source.clip = GetClip(id).clip;
 
             switch (GetClip(id).type)
             {
@@ -80,11 +85,36 @@ namespace Kato
                     source.Play();
                     break;
                 case ClipType.LoopSE:
+                    source.loop = true;
                     source.Play();
                     break;
                 case ClipType.OneShotSE:
                     source.PlayOneShot(GetClip(id).clip);
                     break;
+            }
+        }
+
+        /// <summary>
+        /// 音量調節
+        /// </summary>
+        public void SetVolume()
+        {
+            for (int i = 0; i < _audioSources.Length; i++)
+            {
+                AudioSource source = _audioSources[i];
+
+                switch (i)
+                {
+                    case (int)ClipType.BGM:
+                        source.volume = _bgmSlider.value;
+                        break;
+                    case (int)ClipType.LoopSE:
+                        source.volume = _seSlider.value;
+                        break;
+                    case (int)ClipType.OneShotSE:
+                        source.volume = _seSlider.value;
+                        break;
+                }
             }
         }
     }

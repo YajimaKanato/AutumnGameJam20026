@@ -48,10 +48,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Kato.AudioManager
   _clip: []
-  audioSources:
+  _audioSources:
   - {fileID: 6760722912275671821}
   - {fileID: 5897188502111377081}
   - {fileID: 8865598205382615991}
+  _bgmSlider: {fileID: 0}
+  _seSlider: {fileID: 0}
 --- !u!82 &6760722912275671821
 AudioSource:
   m_ObjectHideFlags: 0
