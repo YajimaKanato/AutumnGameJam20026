@@ -21,13 +21,12 @@ namespace Kato
 
     public class AudioManager : MonoBehaviour
     {
-        [SerializeField, Header("AudioClip設定")] private ClipData[] _clip;
+        [SerializeField, Header("AudioClip設定")] private Dictionary<string, ClipData> _dict = new Dictionary<string, ClipData>();
         [SerializeField] private AudioSource[] _audioSources;
         [Header("======音量調節用スライダー======")]
         [SerializeField] private Slider _bgmSlider;
         [SerializeField] private Slider _seSlider;
 
-        private Dictionary<string, ClipData> _dict;
 
         public static AudioManager instance { get; set; }
 
@@ -44,20 +43,6 @@ namespace Kato
                 Destroy(gameObject);
             }
             #endregion
-
-            InitDictionary();//Dictionary初期化
-        }
-
-        /// <summary>
-        /// Dictionary初期化
-        /// </summary>
-        private void InitDictionary()
-        {
-            _dict = new Dictionary<string, ClipData>();
-            foreach (ClipData data in _clip)
-            {
-                _dict[data.id] = data;
-            }
         }
 
         /// <summary>
