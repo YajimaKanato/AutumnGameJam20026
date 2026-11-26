@@ -30,7 +30,7 @@ namespace Aizawa
             foreach(var r in ScoreManager.Ranking)
             {
                 var newElement = Instantiate(_rankingElementPrefab, _content).transform.GetChild(0).GetComponent<Text>();
-                newElement.text = $"{r.rank}位\n「{r.name}」\n{r.score}点";
+                newElement.text = $"{r.rank}位 : {r.score}点\n「{r.name}」";
             }
         }
     }
