@@ -19,6 +19,14 @@ namespace Aizawa
         public static List<RankingElement> Ranking => GetRanking();
 
         /// <summary>
+        /// ランキングをリセットする。
+        /// </summary>
+        public static void ResetRanking()
+        {
+            _ranking.Clear();
+        }
+
+        /// <summary>
         /// 新たなプレイヤーを登録する
         /// </summary>
         /// <param name="name">プレイヤー名</param>
