@@ -121,6 +121,16 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""Menu"",
+                    ""type"": ""Button"",
+                    ""id"": ""884124b6-1886-4281-bbf5-eadd3373a4c0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -222,6 +232,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""LightMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""26780a0f-4f02-43fd-903a-38583b3c00b4"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -233,6 +254,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Ingame_Move = m_Ingame.FindAction("Move", throwIfNotFound: true);
         m_Ingame_Interact = m_Ingame.FindAction("Interact", throwIfNotFound: true);
         m_Ingame_LightMove = m_Ingame.FindAction("LightMove", throwIfNotFound: true);
+        m_Ingame_Menu = m_Ingame.FindAction("Menu", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -316,6 +338,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Ingame_Move;
     private readonly InputAction m_Ingame_Interact;
     private readonly InputAction m_Ingame_LightMove;
+    private readonly InputAction m_Ingame_Menu;
     /// <summary>
     /// Provides access to input actions defined in input action map "Ingame".
     /// </summary>
@@ -339,6 +362,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Ingame/LightMove".
         /// </summary>
         public InputAction @LightMove => m_Wrapper.m_Ingame_LightMove;
+        /// <summary>
+        /// Provides access to the underlying input action "Ingame/Menu".
+        /// </summary>
+        public InputAction @Menu => m_Wrapper.m_Ingame_Menu;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -374,6 +401,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @LightMove.started += instance.OnLightMove;
             @LightMove.performed += instance.OnLightMove;
             @LightMove.canceled += instance.OnLightMove;
+            @Menu.started += instance.OnMenu;
+            @Menu.performed += instance.OnMenu;
+            @Menu.canceled += instance.OnMenu;
         }
 
         /// <summary>
@@ -394,6 +424,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @LightMove.started -= instance.OnLightMove;
             @LightMove.performed -= instance.OnLightMove;
             @LightMove.canceled -= instance.OnLightMove;
+            @Menu.started -= instance.OnMenu;
+            @Menu.performed -= instance.OnMenu;
+            @Menu.canceled -= instance.OnMenu;
         }
 
         /// <summary>
@@ -455,5 +488,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLightMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Menu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMenu(InputAction.CallbackContext context);
     }
 }
