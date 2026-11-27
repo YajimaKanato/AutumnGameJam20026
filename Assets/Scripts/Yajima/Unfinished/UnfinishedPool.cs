@@ -17,6 +17,9 @@ namespace Yajima
         Transform _inactiveRoot;
         double _nextSpawnTime;
         double _spawnClock;
+        UnfinishedType _selectedType;
+
+        public UnfinishedType SelectedType => _selectedType;
 
         public event Action<int> OnInteractedPlayer;
 
@@ -33,18 +36,31 @@ namespace Yajima
             unfinished = null;
             if (IsStopped || _spawnClock < _nextSpawnTime || _unfinishedPrefabs == null) return false;
 
-            UnfinishedType selected = default;
-            int validCount = 0;
-            foreach (var entry in _unfinishedPrefabs)
-            {
-                if (entry.Value == null) continue;
-                if (UnityEngine.Random.Range(0, ++validCount) == 0) selected = entry.Key;
-            }
-
             int tierIndex = _unfinishedTier is { Length: > 0 }
                 ? UnityEngine.Random.Range(0, _unfinishedTier.Length)
                 : -1;
-            return validCount > 0 && TrySpawn(selected, tierIndex, out unfinished);
+            return TrySpawn(_selectedType, tierIndex, out unfinished);
+        }
+
+        public void SelectStartingType()
+        {
+            _selectedType = UnfinishedType.Default;
+            if (_unfinishedPrefabs == null) return;
+
+            int validCount = 0;
+            foreach (UnfinishedType type in Enum.GetValues(typeof(UnfinishedType)))
+            {
+                if (type == UnfinishedType.Default || GetPrefab(type) == null) continue;
+                if (UnityEngine.Random.Range(0, ++validCount) == 0) _selectedType = type;
+            }
+        }
+
+        Unfinished GetPrefab(UnfinishedType type)
+        {
+            if (_unfinishedPrefabs.TryGetValue(type, out var prefab) && prefab != null)
+                return prefab;
+
+            return _unfinishedPrefabs.TryGetValue(UnfinishedType.Default, out var fallback) ? fallback : null;
         }
 
         // tierIndex が -1 の場合はプレハブの初期値を使用する。
@@ -56,7 +72,8 @@ namespace Yajima
                     || tierIndex >= _unfinishedTier.Length || _unfinishedTier[tierIndex] == null)))
                 return false;
 
-            if (!_unfinishedPrefabs.TryGetValue(type, out var prefab) || prefab == null) return false;
+            var prefab = GetPrefab(type);
+            if (prefab == null) return false;
 
             _objects.RemoveAll(item => item.Instance == null);
             if (_objects.Count >= _maxSpawnCount && !_objects.Exists(item => !item.InUse)) return false;
