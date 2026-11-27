@@ -9,6 +9,11 @@ namespace Aizawa
     /// </summary>
     public class ResultScoreUI : MonoBehaviour
     {
+        [SerializeField]
+        private float _firstOpenSpeed;
+        [SerializeField]
+        private float _openSpeed;
+
         private char[] _scoreChars;
         private int _showedDigits;
 
@@ -58,12 +63,14 @@ namespace Aizawa
         /// </summary>
         IEnumerator DigitStep()
         {
+            //最初の1つが表示されるまでの時間は個別で決められるように
+            yield return new WaitForSeconds(_firstOpenSpeed);
+
             //演出が終わったら自動で止まる
             while(_scoreChars != null)
             {
-                yield return new WaitForSeconds(0.5f);
-
                 _showedDigits++;
+                yield return new WaitForSeconds(_openSpeed);
             }
         }
     }
