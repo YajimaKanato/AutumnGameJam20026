@@ -1,5 +1,4 @@
 using UnityEngine;
-using Yajima;
 
 namespace Aizawa
 {
@@ -12,12 +11,6 @@ namespace Aizawa
         private RankingUI _rankingUI;
         [SerializeField]
         private ResultScoreUI _resultScoreUI;
-        [SerializeField] FadeManager _fadeManager;
-
-        private async void Awake()
-        {
-            await _fadeManager.FadeIn();
-        }
 
         /// <summary>
         /// リザルト画面のUIを展開する
@@ -33,7 +26,6 @@ namespace Aizawa
         /// </summary>
         public async void Replay()
         {
-            await _fadeManager.FadeOut();
             await SceneTransitionManager.TransitionScene(Scene.Ingame);
         }
 
@@ -42,7 +34,6 @@ namespace Aizawa
         /// </summary>
         public async void BackTitle()
         {
-            await _fadeManager.FadeOut();
             await SceneTransitionManager.TransitionScene(Scene.Title);
         }
     }

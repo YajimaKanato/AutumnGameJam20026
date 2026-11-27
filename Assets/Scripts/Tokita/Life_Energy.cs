@@ -290,7 +290,7 @@ namespace Tokita
 
             if (_Player != null)
             {
-                //_Player.OnLightMove += SetLightMove;
+                _Player.OnLightMove += SetLightMove;
             }
             else
             {
@@ -306,7 +306,7 @@ namespace Tokita
         {
             if (_Player != null)
             {
-                //_Player.OnLightMove -= SetLightMove;
+                _Player.OnLightMove -= SetLightMove;
             }
 
             if (_ShakeCoroutine != null)
