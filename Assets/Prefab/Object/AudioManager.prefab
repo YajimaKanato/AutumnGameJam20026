@@ -72,6 +72,10 @@ MonoBehaviour:
     value:
       clip: {fileID: 8300000, guid: 751d5872eb08e457c9be2e639baf62d4, type: 3}
       type: 2
+  - key: InGameBGM
+    value:
+      clip: {fileID: 8300000, guid: e23b9c1b71db24bdd86ebafa6c1552ba, type: 3}
+      type: 0
   _audioSources:
   - {fileID: 6760722912275671821}
   - {fileID: 5897188502111377081}
