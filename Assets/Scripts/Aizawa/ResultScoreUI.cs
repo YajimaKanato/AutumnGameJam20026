@@ -1,6 +1,6 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Aizawa
 {
@@ -17,11 +17,11 @@ namespace Aizawa
         private char[] _scoreChars;
         private int _showedDigits;
 
-        private Text _text;
+        private TextMeshProUGUI _text;
 
         void Start()
         {
-            _text = transform.GetChild(0).GetComponent<Text>();
+            _text = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         }
 
         /// <summary>
