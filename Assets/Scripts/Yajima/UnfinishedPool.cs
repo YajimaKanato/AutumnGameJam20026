@@ -5,7 +5,7 @@ using UnityEngine.Splines;
 
 namespace Yajima
 {
-    public class UnfinishedPool : MonoBehaviour
+    public class UnfinishedPool : IngameBehaviour
     {
         [SerializeField] Dictionary<UnfinishedType, Unfinished> _unfinishedPrefabs = new();
         [SerializeField] UnfinishedTier[] _unfinishedTier;
@@ -16,18 +16,22 @@ namespace Yajima
         readonly List<PooledObject> _objects = new();
         Transform _inactiveRoot;
         double _nextSpawnTime;
+        double _spawnClock;
 
         public event Action<int> OnInteractedPlayer;
 
         private void Update()
         {
+            if (IsStopped) return;
+
+            _spawnClock += Time.deltaTime;
             TrySpawn(out _);
         }
 
         public bool TrySpawn(out Unfinished unfinished)
         {
             unfinished = null;
-            if (Time.timeAsDouble < _nextSpawnTime || _unfinishedPrefabs == null) return false;
+            if (IsStopped || _spawnClock < _nextSpawnTime || _unfinishedPrefabs == null) return false;
 
             UnfinishedType selected = default;
             int validCount = 0;
@@ -47,7 +51,7 @@ namespace Yajima
         public bool TrySpawn(UnfinishedType type, int tierIndex, out Unfinished unfinished)
         {
             unfinished = null;
-            if (!isActiveAndEnabled || Time.timeAsDouble < _nextSpawnTime || _maxSpawnCount <= 0 || _unfinishedPrefabs == null
+            if (!isActiveAndEnabled || IsStopped || _spawnClock < _nextSpawnTime || _maxSpawnCount <= 0 || _unfinishedPrefabs == null
                 || tierIndex < -1 || (tierIndex >= 0 && (_unfinishedTier == null
                     || tierIndex >= _unfinishedTier.Length || _unfinishedTier[tierIndex] == null)))
                 return false;
@@ -76,7 +80,7 @@ namespace Yajima
             else
                 unfinished.UseDefaultSettings(prefab);
 
-            _nextSpawnTime = Time.timeAsDouble + _spawnInterval;
+            _nextSpawnTime = _spawnClock + _spawnInterval;
             unfinished.gameObject.SetActive(true);
             unfinished.Entry();
             return true;
