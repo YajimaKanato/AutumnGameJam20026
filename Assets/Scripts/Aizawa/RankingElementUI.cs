@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,13 +10,17 @@ namespace Aizawa
     /// </summary>
     public class RankingElementUI : MonoBehaviour
     {
-        private Text _text;
+        [SerializeField]
+        private Sprite[] _rankFrames = new Sprite[10];
+
+        private TextMeshProUGUI _text;
 
         public void SetRank(RankingElement element)
         {
-            _text = transform.GetChild(0).GetComponent<Text>();
+            _text = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             _text.gameObject.SetActive(false);
-            _text.text = $"{element.rank}位 : {element.score}点\n「{element.name}」";
+            GetComponent<Image>().sprite = _rankFrames[element.rank - 1];
+            _text.text = $"{element.score:00000}p :「{element.name}」";
 
             //回転させる
             transform.localEulerAngles = new(-180, 0, 0);
