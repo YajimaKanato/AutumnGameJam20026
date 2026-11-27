@@ -67,18 +67,27 @@ namespace Yajima
 
         public void Move(bool isMoving)
         {
-            if (!IsStopped && isMoving && _moveUpTween == null)
-            {
-                _moveUpTween = DOTween.To(() => _moveUpHeight, height =>
-                    {
-                        _moveUpHeight = height;
-                        ApplyHeight();
-                    }, _moveUpOffset, _moveUpHalfSpeed)
-                    .SetEase(_moveUpHalfEase)
-                    .SetLoops(2, LoopType.Yoyo)
-                    .SetUpdate(UpdateType.Fixed)
-                    .OnKill(() => _moveUpTween = null);
-            }
+            if (!IsStopped && isMoving) PlayMoveUp();
+        }
+
+        private void LateUpdate()
+        {
+            if (IsFinished) PlayMoveUp();
+        }
+
+        void PlayMoveUp()
+        {
+            if (_moveUpTween != null || _moveUpHalfSpeed <= 0f || _moveUpOffset == 0f) return;
+
+            _moveUpTween = DOTween.To(() => _moveUpHeight, height =>
+                {
+                    _moveUpHeight = height;
+                    ApplyHeight();
+                }, _moveUpOffset, _moveUpHalfSpeed)
+                .SetEase(_moveUpHalfEase)
+                .SetLoops(2, LoopType.Yoyo)
+                .SetUpdate(UpdateType.Fixed)
+                .OnKill(() => _moveUpTween = null);
         }
 
         public void StopMovement()
@@ -132,6 +141,11 @@ namespace Yajima
             _moveTween?.Play();
             _moveUpTween?.Play();
             _interactTween?.Play();
+        }
+
+        protected override void OnFinished()
+        {
+            _moveUpTween?.Play();
         }
     }
 }

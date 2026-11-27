@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using R3;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ namespace Yajima
 {
     public class IngameManager : MonoBehaviour
     {
+        [Header("LifeTime")]
         [SerializeField] LightMoveManager _lightMoveManager;
         [SerializeField] LifeTimePresenter _lifeTimePresenter;
         [SerializeField] LifeEnergyPresenter _lifeEnergyPresenter;
@@ -16,10 +18,14 @@ namespace Yajima
         [Header("Score")]
         [SerializeField] IngameScorePresenter _scorePresenter;
         [SerializeField] UnfinishedPool _unfinishedPool;
+        [Header("その他")]
+        [SerializeField] GameObject _menu;
+        [SerializeField] FadeManager _fadeManager;
         List<IDisposable> _disposables = new();
         static readonly HashSet<IngameBehaviour> _ingameObjects = new();
         static bool _isPaused;
         static bool _isFinished;
+        internal static bool HasStarted { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetIngameState()
@@ -27,6 +33,7 @@ namespace Yajima
             _ingameObjects.Clear();
             _isPaused = false;
             _isFinished = false;
+            HasStarted = false;
         }
 
         internal static void RegisterObj(IngameBehaviour obj)
@@ -35,7 +42,7 @@ namespace Yajima
 
             if (_isFinished)
                 obj.Finish();
-            else if (_isPaused)
+            else if (!HasStarted || _isPaused)
                 obj.Pause();
             else
                 obj.Resume();
@@ -52,10 +59,13 @@ namespace Yajima
             _criticalEventPresenter?.StartSchedule(_lifeTimePresenter?.RemainingTime?.CurrentValue ?? 0f);
         }
 
+        private void Start() => StartGame().Forget();
+
         private void OnDestroy()
         {
             _isPaused = false;
             _isFinished = false;
+            HasStarted = false;
         }
 
         private void OnEnable()
@@ -109,14 +119,25 @@ namespace Yajima
 
         }
 
-        async void StartGame()
+        async UniTask StartGame()
         {
+            if (_fadeManager != null &&
+                await _fadeManager.FadeIn(destroyCancellationToken).SuppressCancellationThrow())
+                return;
 
+            if (_isFinished) return;
+
+            HasStarted = true;
+            foreach (var obj in new List<IngameBehaviour>(_ingameObjects))
+            {
+                if (obj != null && _ingameObjects.Contains(obj))
+                    obj.Resume();
+            }
         }
 
         void OpenMenu(bool openMenu)
         {
-            if (_isFinished || openMenu == _isPaused) return;
+            if (!HasStarted || _isFinished || openMenu == _isPaused) return;
 
             _isPaused = openMenu;
             foreach (var obj in new List<IngameBehaviour>(_ingameObjects))
@@ -128,6 +149,8 @@ namespace Yajima
                 else
                     obj.Resume();
             }
+
+            _menu?.SetActive(_isPaused);
         }
 
         void LightMove(bool lightMoved)

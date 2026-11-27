@@ -152,7 +152,7 @@ namespace Yajima
 
         void OpenMenu()
         {
-            if (_menu.WasPressedThisFrame())
+            if (IngameManager.HasStarted && !IsFinished && _menu.WasPressedThisFrame())
                 _openedMenu.Value = !_openedMenu.Value;
         }
         #endregion
