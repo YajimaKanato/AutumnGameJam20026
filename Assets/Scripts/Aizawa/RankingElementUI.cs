@@ -20,7 +20,7 @@ namespace Aizawa
             _text = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             _text.gameObject.SetActive(false);
             GetComponent<Image>().sprite = _rankFrames[element.rank - 1];
-            _text.text = $"{element.score:00000}p :「{element.name}」";
+            _text.text = $"{element.score}p : {element.name}";
 
             //回転させる
             transform.localEulerAngles = new(-180, 0, 0);
