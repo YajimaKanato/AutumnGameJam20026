@@ -1,5 +1,5 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Aizawa
 {
@@ -14,6 +14,8 @@ namespace Aizawa
         /// <summary> 項目のプレハブ </summary>
         [SerializeField]
         private GameObject _rankingElementPrefab;
+        [SerializeField]
+        private float _openSpeed;
 
         /// <summary>
         /// ランキングを表示する
@@ -27,10 +29,18 @@ namespace Aizawa
             }
 
             //ランキングに基づきデータを表示する
+            StartCoroutine(SetRankingElements());
+        }
+
+        /// <summary>
+        /// ランキングを順々に表示する
+        /// </summary>
+        IEnumerator SetRankingElements()
+        {
             foreach(var r in ScoreManager.Ranking)
             {
-                var newElement = Instantiate(_rankingElementPrefab, _content).transform.GetChild(0).GetComponent<Text>();
-                newElement.text = $"{r.rank}位 : {r.score}点\n「{r.name}」";
+                Instantiate(_rankingElementPrefab, _content).GetComponent<RankingElementUI>().SetRank(r);
+                yield return new WaitForSeconds(_openSpeed);
             }
         }
     }
