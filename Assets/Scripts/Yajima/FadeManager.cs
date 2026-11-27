@@ -12,29 +12,23 @@ namespace Yajima
         [SerializeField] TimelineAsset _fadeInAsset;
         [SerializeField] TimelineAsset _fadeOutAsset;
 
-        bool IsFinished => _fadeDirector !=null && _fadeDirector.time >= _fadeDirector.duration;
+        public UniTask FadeIn(CancellationToken cancellationToken = default)
+            => PlayFade(_fadeInAsset, cancellationToken);
 
-        public async UniTask FadeIn(CancellationToken cancellationToken = default)
+        public UniTask FadeOut(CancellationToken cancellationToken = default)
+            => PlayFade(_fadeOutAsset, cancellationToken);
+
+        async UniTask PlayFade(TimelineAsset asset, CancellationToken cancellationToken)
         {
-            if (_fadeDirector == null) return;
-            if (_fadeInAsset == null) return;
+            var director = _fadeDirector;
+            if (director == null || !director.isActiveAndEnabled || asset == null) return;
 
-            _fadeDirector.playableAsset = _fadeInAsset;
-            _fadeDirector.initialTime = 0;
-            _fadeDirector.extrapolationMode = DirectorWrapMode.Hold;
-            _fadeDirector.Play();
-            await UniTask.WaitUntil(() => _fadeDirector == null || IsFinished, cancellationToken: cancellationToken);
-        }
-
-        public async UniTask FadeOut()
-        {
-            if (_fadeDirector == null) return;
-            if (_fadeOutAsset == null) return;
-
-            _fadeDirector.playableAsset = _fadeOutAsset;
-            _fadeDirector.initialTime = 0;
-            _fadeDirector.Play();
-            await UniTask.WaitUntil(() => IsFinished);
+            director.Stop();
+            director.initialTime = 0;
+            director.time = 0;
+            director.Play(asset, DirectorWrapMode.Hold);
+            await UniTask.WaitUntil(() => director == null || !director.isActiveAndEnabled
+                || director.time >= director.duration, cancellationToken: cancellationToken);
         }
     }
 }

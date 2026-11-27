@@ -1,3 +1,4 @@
+using Aizawa;
 using Cysharp.Threading.Tasks;
 using R3;
 using System;
@@ -78,6 +79,8 @@ namespace Yajima
 
                 _disposables.Add(remainingTime.Subscribe(_criticalEventPresenter.UpdateRemainingTime));
             }
+            if (remainingTime != null)
+                _disposables.Add(remainingTime.Where(time => time <= 0f).Subscribe(_ => FinishGame()));
 
             if (_unfinishedPool != null && _scorePresenter != null)
                 _unfinishedPool.OnInteractedPlayer += _scorePresenter.AddScore;
@@ -128,6 +131,12 @@ namespace Yajima
             if (_isFinished) return;
 
             HasStarted = true;
+            if (_lifeTimePresenter?.RemainingTime?.CurrentValue <= 0f)
+            {
+                FinishGame();
+                return;
+            }
+
             foreach (var obj in new List<IngameBehaviour>(_ingameObjects))
             {
                 if (obj != null && _ingameObjects.Contains(obj))
@@ -168,9 +177,9 @@ namespace Yajima
 
         }
 
-        void FinishGame()
+        async void FinishGame()
         {
-            if (_isFinished) return;
+            if (!HasStarted || _isFinished) return;
 
             _isFinished = true;
             _isPaused = false;
@@ -179,6 +188,12 @@ namespace Yajima
                 if (obj != null && _ingameObjects.Contains(obj))
                     obj.Finish();
             }
+
+            if (_fadeManager != null &&
+                await _fadeManager.FadeOut(destroyCancellationToken).SuppressCancellationThrow())
+                return;
+
+            await SceneTransitionManager.TransitionScene(Scene.Result);
         }
     }
 }
