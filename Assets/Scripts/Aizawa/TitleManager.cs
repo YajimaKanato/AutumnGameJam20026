@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using Yajima;
+using Kato;
 
 namespace Aizawa
 {
@@ -19,6 +20,11 @@ namespace Aizawa
         private async void Awake()
         {
             await _fadeManager.FadeIn();
+        }
+
+        void Start()
+        {
+            AudioManager.instance.Play("TitleBGM");
         }
 
         /// <summary>
