@@ -1,5 +1,6 @@
 using Aizawa;
 using Cysharp.Threading.Tasks;
+using Kato;
 using R3;
 using System;
 using System.Collections.Generic;
@@ -125,6 +126,8 @@ namespace Yajima
 
         async UniTask StartGame()
         {
+            AudioManager.instance.Play("InGameBGM");
+            
             if (_fadeManager != null &&
                 await _fadeManager.FadeIn(destroyCancellationToken).SuppressCancellationThrow())
                 return;
