@@ -1,3 +1,4 @@
+using Kato;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -18,6 +19,9 @@ namespace Aizawa
         /// <summary> 選択時の画像 </summary>
         [SerializeField]
         private Sprite _selected;
+        /// <summary> クリック音のId </summary>
+        [SerializeField]
+        private string _clickSoundId;
         /// <summary> キーボード選択移行時最初に選択されるかどうか </summary>
         [SerializeField]
         private bool _isFirstSelecting;
@@ -30,6 +34,7 @@ namespace Aizawa
         void Start()
         {
             _button = GetComponent<Button>();
+            _button.onClick.AddListener(() => AudioManager.instance.Play(_clickSoundId));
 
             //画像をアサインする
             _button.transition = Selectable.Transition.SpriteSwap;
