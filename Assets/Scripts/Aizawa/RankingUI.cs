@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Aizawa
 {
@@ -29,8 +28,7 @@ namespace Aizawa
             //ランキングに基づきデータを表示する
             foreach(var r in ScoreManager.Ranking)
             {
-                var newElement = Instantiate(_rankingElementPrefab, _content).transform.GetChild(0).GetComponent<Text>();
-                newElement.text = $"{r.rank}位 : {r.score}点\n「{r.name}」";
+                Instantiate(_rankingElementPrefab, _content).GetComponent<RankingElementUI>().SetRank(r);
             }
         }
     }
