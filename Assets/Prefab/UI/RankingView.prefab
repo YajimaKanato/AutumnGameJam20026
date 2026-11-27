@@ -93,6 +93,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Aizawa.RankingUI
   _content: {fileID: 1339486403673780089}
   _rankingElementPrefab: {fileID: 3040191126372198145, guid: 4bd432391cd344da581a3d92390658bf, type: 3}
+  _openSpeed: 0.6
 --- !u!1 &1726735712017037186
 GameObject:
   m_ObjectHideFlags: 0

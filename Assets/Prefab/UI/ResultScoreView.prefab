@@ -89,6 +89,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acc2a5b3e600f40cbb425b757061fb17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Aizawa.ResultScoreUI
+  _firstOpenSpeed: 1
+  _openSpeed: 0.5
 --- !u!1 &7559452189238696856
 GameObject:
   m_ObjectHideFlags: 0
