@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Yajima;
 
 namespace Aizawa
 {
@@ -13,6 +14,12 @@ namespace Aizawa
         [SerializeField] WindowPerformance _optionWindow;
         [SerializeField] WindowPerformance _creditWindow;
         [SerializeField] WindowPerformance _rankingWindow;
+        [SerializeField] FadeManager _fadeManager;
+
+        private async void Awake()
+        {
+            await _fadeManager.FadeIn();
+        }
 
         /// <summary>
         /// 名前を決定してインゲームに入る
@@ -21,6 +28,7 @@ namespace Aizawa
         {
             if (ScoreManager.SetPlayer(_nameField.text))
             {
+                await _fadeManager.FadeOut();
                 await SceneTransitionManager.TransitionScene(Scene.Ingame);
             }
         }

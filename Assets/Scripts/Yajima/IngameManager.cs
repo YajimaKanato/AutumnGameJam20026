@@ -58,6 +58,7 @@ namespace Yajima
             _lifeTimePresenter?.Init();
             _lifeEnergyPresenter?.Init();
             _criticalEventPresenter?.StartSchedule(_lifeTimePresenter?.RemainingTime?.CurrentValue ?? 0f);
+            _menu?.gameObject.SetActive(false);
         }
 
         private void Start() => StartGame().Forget();
