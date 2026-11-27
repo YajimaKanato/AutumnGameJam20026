@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Kato;
 using UnityEngine;
 using Yajima;
 
@@ -30,8 +31,16 @@ namespace Aizawa
             var col = GetComponent<Collider>();
             col.isTrigger = true;
 
-            _debrisAnimator.SetActive(true);
-            transform.DORotate(new(0, 180, 0), 0.2f);
+            if(Random.Range(0, 3) == 1)
+            {
+                AudioManager.instance.Play("BombMissSE");
+                _debrisAnimator.SetActive(true);
+            }
+            else
+            {
+                AudioManager.instance.Play("BombCutSE");
+            }
+            await transform.DORotate(new(0, 180, 0), 0.2f).AsyncWaitForCompletion();
             await UniTask.WaitUntil(() => !_debrisAnimator.activeSelf);
 
             col.isTrigger = false;

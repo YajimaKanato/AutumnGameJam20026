@@ -1,3 +1,4 @@
+using Kato;
 using UnityEngine;
 using Yajima;
 
@@ -17,6 +18,11 @@ namespace Aizawa
         private async void Awake()
         {
             await _fadeManager.FadeIn();
+        }
+
+        void Start()
+        {
+            AudioManager.instance.Play("ResultBGM");
         }
 
         /// <summary>

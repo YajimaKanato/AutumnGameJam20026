@@ -47,7 +47,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547231b07793ea644af835618543cde3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Kato.AudioManager
-  _clip: []
+  _dict:
+  - key: TitleBGM
+    value:
+      clip: {fileID: 8300000, guid: 59700068a0f2d4fa1acfac042a35ed42, type: 3}
+      type: 0
+  - key: ResultBGM
+    value:
+      clip: {fileID: 8300000, guid: f42e33849101f436fa3f41ed24fec691, type: 3}
+      type: 0
+  - key: ButtonSE
+    value:
+      clip: {fileID: 8300000, guid: cd199f13097db4868a833c7cbb06fe2b, type: 3}
+      type: 2
+  - key: BombMissSE
+    value:
+      clip: {fileID: 8300000, guid: 445d56522909b4cfe927ec411f2f98e6, type: 3}
+      type: 2
+  - key: SwordSE
+    value:
+      clip: {fileID: 8300000, guid: 25de479a06f5f4221baf97ceb8bcaa13, type: 3}
+      type: 2
+  - key: BombCutSE
+    value:
+      clip: {fileID: 8300000, guid: 751d5872eb08e457c9be2e639baf62d4, type: 3}
+      type: 2
+  - key: InGameBGM
+    value:
+      clip: {fileID: 8300000, guid: e23b9c1b71db24bdd86ebafa6c1552ba, type: 3}
+      type: 0
   _audioSources:
   - {fileID: 6760722912275671821}
   - {fileID: 5897188502111377081}

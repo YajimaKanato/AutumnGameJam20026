@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Kato;
 using UnityEngine;
 using Yajima;
 
@@ -33,6 +34,7 @@ namespace Aizawa
             var col = GetComponent<Collider>();
             col.isTrigger = true;
 
+            AudioManager.instance.Play("SwordSE");
             _sword.gameObject.SetActive(true);
             transform.DORotate(new(0, 180, 0), 0.2f);
             _sword.angularVelocity = Random.Range(1, 5) * 200;
