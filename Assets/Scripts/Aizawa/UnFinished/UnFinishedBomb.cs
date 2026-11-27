@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -17,9 +16,6 @@ namespace Aizawa
         public override void Entry()
         {
             base.Entry();
-            var p = transform.position;
-            p.y = 0;
-            transform.position = p;
         }
 
         public override void Exit()
