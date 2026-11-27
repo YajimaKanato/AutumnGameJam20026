@@ -17,15 +17,6 @@ namespace Tokita
             string name = _PlayerInput.text;
 
             bool result = ScoreManager.SetPlayer(name);
-
-            if (result)
-            {
-                Debug.Log("プレイヤー名の登録完了！");
-            }
-            else
-            {
-                return;
-            }
         }
     }
 }
