@@ -81,6 +81,7 @@ namespace Yajima
                 _interactCollider.enabled = false;
             IngameManager.UnregisterObj(this);
             Resume();
+            _input?.Disable();
         }
 
         private void Update()
