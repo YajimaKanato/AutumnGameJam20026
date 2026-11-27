@@ -5,27 +5,18 @@ using UnityEngine.Splines;
 
 namespace Yajima
 {
-    public class Unfinished : MonoBehaviour
+    public class Unfinished : IngameBehaviour
     {
         [Header("初期値")]
         [SerializeField] int _score = 100;
         [SerializeField] float _lifeTime = 5f;
         [SerializeField] float _moveSpeed = 3f;
-        [Header("演出")]
-        [SerializeField] float _moveUpOffset = 0.2f;
-        [SerializeField] float _moveUpHalfSpeed = 0.2f;
-        [SerializeField] Ease _moveUpHalfEase = Ease.Linear;
-        [SerializeField, Min(0.01f)] float _turnDuration = 0.3f;
-        [SerializeField, Min(0f)] float _turnJumpHeight = 0.2f;
+        [SerializeField] PaperPuppet _paperPuppet;
 
         Vector3 _previousPosition;
-        Tween _moveUpTween;
-        Tween _turnTween;
-        Quaternion? _rotationBeforeTurn;
         SplineContainer _moveSplineContainer;
         Spline _moveSpline;
         float _movePhase;
-        float _moveUpHeight;
         float _lifeRemaining;
         bool _entered;
         bool _interacted;
@@ -34,30 +25,22 @@ namespace Yajima
         public event Action OnEntry;
         public event Action<Unfinished> OnExit;
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
             _previousPosition = transform.position;
             _interacted = false;
+            base.OnEnable();
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
             _entered = false;
-            _moveUpTween?.Rewind();
-            _moveUpTween?.Kill();
-            _moveUpTween = null;
-            _turnTween?.Kill();
-            if (_rotationBeforeTurn.HasValue)
-            {
-                transform.rotation = _rotationBeforeTurn.Value;
-                _rotationBeforeTurn = null;
-            }
-            SetMoveUpHeight(0f);
+            base.OnDisable();
         }
 
         private void Update()
         {
-            if (!_entered || _interacted) return;
+            if (IsStopped || !_entered || _interacted) return;
 
             _lifeRemaining -= Time.deltaTime;
             if (_lifeRemaining <= 0f)
@@ -72,7 +55,7 @@ namespace Yajima
             var progress = Mathf.PingPong(_movePhase * 2f, 1f);
             var start = GetSplineEndpoint(_moveSplineContainer, _moveSpline, 0);
             var end = GetSplineEndpoint(_moveSplineContainer, _moveSpline, _moveSpline.Count - 1);
-            transform.position = Vector3.Lerp(start, end, progress) + Vector3.up * _moveUpHeight;
+            transform.position = Vector3.Lerp(start, end, progress);
         }
 
         private void LateUpdate()
@@ -82,22 +65,14 @@ namespace Yajima
 
         void MovePerform()
         {
+            if (IsStopped) return;
+
             var position = transform.position;
             var isMoving = position.x != _previousPosition.x || position.z != _previousPosition.z;
             _previousPosition = position;
 
-            if (!isMoving || _moveUpTween != null) return;
-
-            _moveUpTween = DOTween.To(() => _moveUpHeight, SetMoveUpHeight, _moveUpOffset, _moveUpHalfSpeed)
-                .SetEase(_moveUpHalfEase)
-                .SetLoops(2, LoopType.Yoyo)
-                .OnComplete(() => _moveUpTween = null);
-        }
-
-        void SetMoveUpHeight(float height)
-        {
-            transform.position += Vector3.up * (height - _moveUpHeight);
-            _moveUpHeight = height;
+            if (_paperPuppet != null && _paperPuppet.isActiveAndEnabled)
+                _paperPuppet.Move(isMoving);
         }
 
         internal static Vector3 GetSplineEndpoint(SplineContainer container, Spline spline, int knotIndex)
@@ -141,39 +116,32 @@ namespace Yajima
 
         public virtual void InteractExit(Player player)
         {
-            if (_interacted) return;
+            if (IsStopped || _interacted) return;
 
-            Turn(player).OnComplete(Exit);
+            var turn = Turn(player);
+            turn?.OnComplete(Exit);
             OnInteractedPlayer?.Invoke(_score);
+            if (turn == null && isActiveAndEnabled) Exit();
         }
 
         protected Tween Turn(Player player)
         {
             _interacted = true;
-            _moveUpTween?.Kill();
-            _moveUpTween = null;
-            SetMoveUpHeight(0f);
+            if (_paperPuppet == null || !_paperPuppet.isActiveAndEnabled) return null;
 
-            _rotationBeforeTurn = transform.rotation;
-            var rotationY = player.transform.position.x >= transform.position.x ? -180f : 180f;
-
-            var sequence = DOTween.Sequence();
-            sequence.Append(transform.DORotate(Vector3.up * rotationY, _turnDuration, RotateMode.WorldAxisAdd)
-                .SetEase(Ease.Linear));
-            sequence.Join(DOTween.To(() => _moveUpHeight, SetMoveUpHeight, _turnJumpHeight, _turnDuration * 0.5f)
-                .SetEase(_moveUpHalfEase)
-                .SetLoops(2, LoopType.Yoyo));
-            _turnTween = sequence.OnKill(() => _turnTween = null);
-            return sequence;
+            _paperPuppet.StopMovement();
+            var angle = player.transform.position.x < transform.position.x ? 180f : -180f;
+            return _paperPuppet.Interact(angle);
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!isActiveAndEnabled || _interacted) return;
+            if (!isActiveAndEnabled || IsStopped || _interacted) return;
 
             var player = other.GetComponentInParent<Player>();
             if (player == null || !player.IsInteractCollider(other)) return;
             InteractExit(player);
         }
+
     }
 }
