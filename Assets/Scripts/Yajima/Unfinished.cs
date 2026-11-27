@@ -13,13 +13,13 @@ namespace Yajima
         [SerializeField] float _moveSpeed = 3f;
         [SerializeField] PaperPuppet _paperPuppet;
 
-        Vector3 _previousPosition;
-        SplineContainer _moveSplineContainer;
-        Spline _moveSpline;
-        float _movePhase;
-        float _lifeRemaining;
-        bool _entered;
-        bool _interacted;
+        protected Vector3 _previousPosition;
+        protected SplineContainer _moveSplineContainer;
+        protected Spline _moveSpline;
+        protected float _movePhase;
+        protected float _lifeRemaining;
+        protected bool _entered;
+        protected bool _interacted;
 
         public event Action<int> OnInteractedPlayer;
         public event Action OnEntry;
