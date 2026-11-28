@@ -60,10 +60,13 @@ namespace Kato
         /// <param name="id"></param>
         public void Play(string id)
         {
-            AudioSource source = _audioSources[(int)GetClip(id).type];
-            source.clip = GetClip(id).clip;
+            var data = string.IsNullOrEmpty(id) ? null : GetClip(id);
+            if (data?.clip == null) return;
 
-            switch (GetClip(id).type)
+            AudioSource source = _audioSources[(int)data.type];
+            source.clip = data.clip;
+
+            switch (data.type)
             {
                 case ClipType.BGM:
                     source.Play();
@@ -73,9 +76,23 @@ namespace Kato
                     source.Play();
                     break;
                 case ClipType.OneShotSE:
-                    source.PlayOneShot(GetClip(id).clip);
+                    source.PlayOneShot(data.clip);
                     break;
             }
+        }
+
+        public float BgmVolume => _audioSources[(int)ClipType.BGM].volume;
+        public float SoundEffectVolume => _audioSources[(int)ClipType.OneShotSE].volume;
+
+        public void SetBgmVolume(float volume)
+        {
+            _audioSources[(int)ClipType.BGM].volume = volume;
+        }
+
+        public void SetSoundEffectVolume(float volume)
+        {
+            _audioSources[(int)ClipType.LoopSE].volume = volume;
+            _audioSources[(int)ClipType.OneShotSE].volume = volume;
         }
 
         /// <summary>

@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '99999p : UNI'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1cdde94dfecb74577a996b3c55436d97, type: 2}
+  m_sharedMaterial: {fileID: 2683375803186051597, guid: 1cdde94dfecb74577a996b3c55436d97, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -204,7 +204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b3717336b188f234eb580e926a99d8a7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d9287053552942e58385f84ec52148f4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -227,13 +227,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Aizawa.RankingElementUI
   _rankFrames:
-  - {fileID: 21300000, guid: b3717336b188f234eb580e926a99d8a7, type: 3}
-  - {fileID: 21300000, guid: 08315cccae7f2034e8cd851e9f39eb40, type: 3}
-  - {fileID: 21300000, guid: 6fd25149c5eb28042aedfb5b19263a17, type: 3}
-  - {fileID: 21300000, guid: e38a235282a98144db87d2ba28805a5a, type: 3}
-  - {fileID: 21300000, guid: e45e3c10adfa29d4a9c08223e3f3714a, type: 3}
-  - {fileID: 21300000, guid: 6d91da5d063d9b24d9c179644014b347, type: 3}
-  - {fileID: 21300000, guid: f5930fd9d630f224e84c51dc2924a016, type: 3}
-  - {fileID: 21300000, guid: e1d454b3bff09af4e80517711b862abb, type: 3}
-  - {fileID: 21300000, guid: 33a8ca09ef8c22d49bb23c0df8978de3, type: 3}
-  - {fileID: 21300000, guid: a25b57d6166aca6428cf35f3e222f6ee, type: 3}
+  - {fileID: 21300000, guid: d9287053552942e58385f84ec52148f4, type: 3}
+  - {fileID: 21300000, guid: 27073848f8e545d384a60ee1b4900384, type: 3}
+  - {fileID: 21300000, guid: 4b2ce0759acc4da4b3eecc9674ce0427, type: 3}
+  - {fileID: 21300000, guid: 38521e06d79c48379d94d7d3600ec4a6, type: 3}
+  - {fileID: 21300000, guid: a182ea2a06c74a52aedef00c0e321f2a, type: 3}
+  - {fileID: 21300000, guid: f961d92331e146279cc84019436112ec, type: 3}
+  - {fileID: 21300000, guid: 901df150d7c14b60be02fe36e2a1cdae, type: 3}
+  - {fileID: 21300000, guid: da2250e0cf83406992335548533aefe6, type: 3}
+  - {fileID: 21300000, guid: 0df6a4e8780d49b589c15e3e81087525, type: 3}
+  - {fileID: 21300000, guid: cc9e4c42fbea48b4953f4cdc8618e71f, type: 3}

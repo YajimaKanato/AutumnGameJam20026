@@ -32,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 352364816912008467}
+  - {fileID: 7048640461187386466}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &5266049057306302318
@@ -49,7 +50,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -71,7 +72,38 @@ MonoBehaviour:
   _lifeTime: 5
   _moveSpeed: 3
   _paperPuppet: {fileID: 316575921145911226}
-  _debrisAnimator: {fileID: 5553804641544174385}
+  _bombVisual: {fileID: 6039559111539521872}
+  _front: {fileID: 5785817871814002445}
+  _back: {fileID: 7504679450568697512}
+  _debris: {fileID: 5173717751835027814}
+  _cutSprites:
+  - {fileID: 21300000, guid: 1e4cf1bbe4a10c44b85737a700fb706d, type: 3}
+  - {fileID: 21300000, guid: e554cd53806c39349b79a2e909f03144, type: 3}
+  - {fileID: 21300000, guid: 729799fb701834b468cd53d9ec7950fb, type: 3}
+  - {fileID: 21300000, guid: fe44b98f4952c3747b11f46e0f3b8bb4, type: 3}
+  _explosionFrames:
+  - {fileID: 21300000, guid: 5012a4b6a3134f879e129a30c3aaac32, type: 3}
+  - {fileID: 21300000, guid: f0a95a1579a24403814b804a54b85317, type: 3}
+  - {fileID: 21300000, guid: 7cefb81327174b98a6d483f2412694d4, type: 3}
+  - {fileID: 21300000, guid: d986e494c7aa463eab2b6168d9215099, type: 3}
+  - {fileID: 21300000, guid: 78c84058f0db468e8e07a47754fff902, type: 3}
+  - {fileID: 21300000, guid: 364e89b72ada459aa250ff3cb96499fe, type: 3}
+  - {fileID: 21300000, guid: 7caaed94e8624a2cb760313e7ccdae31, type: 3}
+  - {fileID: 21300000, guid: 9f2f83ec3ed04dfc8d90a304589794cf, type: 3}
+  - {fileID: 21300000, guid: c0dbe3804a8a424086c32025835b9458, type: 3}
+  - {fileID: 21300000, guid: c20a73a4ae9f4bc6bc50de2c8b6de6c7, type: 3}
+  - {fileID: 21300000, guid: aa12ee1871fa4f9ba022a7f3afd70979, type: 3}
+  - {fileID: 21300000, guid: f4c5e90e359f453c93890b293d0eb14b, type: 3}
+  - {fileID: 21300000, guid: 1b13c7aa6bcc413a86b52fb19347955a, type: 3}
+  - {fileID: 21300000, guid: 152530aa986245e7aaa6a1b4fbbe35a9, type: 3}
+  - {fileID: 21300000, guid: e13cb0ac65b740d28724d09784aa31fd, type: 3}
+  - {fileID: 21300000, guid: 2797b2043de14f30ba210b761309469f, type: 3}
+  - {fileID: 21300000, guid: 9b5f56c34ea24437b850d7e9f4060f4d, type: 3}
+  - {fileID: 21300000, guid: b21d8ed6b91f40aa807d41da9d251663, type: 3}
+  - {fileID: 21300000, guid: 412bec9af4cc4a9383152e763df48108, type: 3}
+  - {fileID: 21300000, guid: 10aa233d0b8645e384754d34b17b4da9, type: 3}
+  - {fileID: 21300000, guid: 47c3ff8e32f24875a5b7320ae6f59f18, type: 3}
+  _explosionFramesPerSecond: 24
 --- !u!1 &5553804641544174385
 GameObject:
   m_ObjectHideFlags: 0
@@ -82,8 +114,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7048640461187386466}
   - component: {fileID: 5173717751835027814}
-  - component: {fileID: 3856535878106715651}
-  - component: {fileID: 3415585681544038806}
   m_Layer: 0
   m_Name: BombDebris
   m_TagString: Untagged
@@ -100,11 +130,11 @@ Transform:
   m_GameObject: {fileID: 5553804641544174385}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.21000016, y: 2.791471, z: 0.2599992}
-  m_LocalScale: {x: 0.6100001, y: 0.6100001, z: 0.6100001}
+  m_LocalPosition: {x: 0.1, y: 1, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 352364816912008467}
+  m_Father: {fileID: 348367957102150400}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5173717751835027814
 SpriteRenderer:
@@ -155,7 +185,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 0e0a02d517d9a4c14976f76896060984, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5012a4b6a3134f879e129a30c3aaac32, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -166,40 +196,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!95 &3856535878106715651
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5553804641544174385}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5869ff3fa8f364ed0b053973fbbe2c7d, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3415585681544038806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5553804641544174385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdcc212ee49714da6bd0aeef162128f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Aizawa.EffectAnimator
 --- !u!1 &6039559111539521872
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,7 +227,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7998530147633495683}
-  - {fileID: 7048640461187386466}
   m_Father: {fileID: 348367957102150400}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &316575921145911226
@@ -251,7 +246,7 @@ MonoBehaviour:
   _moveUpOffset: 0.2
   _moveUpHalfSpeed: 0.2
   _moveUpHalfEase: 1
-  _interactRotateSpeed: 0.1
+  _interactRotateSpeed: 0.22
   _interactUpOffset: 0.2
   _interactFreeze: 0
   _interactEase: 1
@@ -336,7 +331,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b330b2bbeee024d1eb15da36371dfb0a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 08b937050fd6aaf419b5bfabd89de76c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -428,7 +423,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 16f7e889bf282451f903c07d137e5d44, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 08b937050fd6aaf419b5bfabd89de76c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

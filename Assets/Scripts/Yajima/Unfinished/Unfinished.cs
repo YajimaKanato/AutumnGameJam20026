@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Splines;
 
 namespace Yajima
@@ -12,6 +13,9 @@ namespace Yajima
         [SerializeField] float _lifeTime = 5f;
         [SerializeField] float _moveSpeed = 3f;
         [SerializeField] PaperPuppet _paperPuppet;
+        [SerializeField] UnityEvent _onSpawned;
+        [SerializeField] UnityEvent<bool> _onInteraction;
+        [SerializeField] UnityEvent _onDespawned;
 
         protected Vector3 _previousPosition;
         protected SplineContainer _moveSplineContainer;
@@ -20,8 +24,11 @@ namespace Yajima
         protected float _lifeRemaining;
         protected bool _entered;
         protected bool _interacted;
+        internal float WorldSpeed { get; set; } = 1f;
+        public bool IsDecoy { get; internal set; }
 
         public event Action<int> OnInteractedPlayer;
+        public event Action<int, Vector3> OnScoreRequested;
         public event Action OnEntry;
         public event Action<Unfinished> OnExit;
 
@@ -42,7 +49,8 @@ namespace Yajima
         {
             if (IsStopped || !_entered || _interacted) return;
 
-            _lifeRemaining -= Time.deltaTime;
+            float delta = Time.deltaTime * WorldSpeed;
+            _lifeRemaining -= delta;
             if (_lifeRemaining <= 0f)
             {
                 Exit();
@@ -51,11 +59,10 @@ namespace Yajima
 
             if (_moveSplineContainer == null || _moveSpline == null || _moveSpline.Count < 2 || _moveSpeed <= 0f) return;
 
-            _movePhase = Mathf.Repeat(_movePhase + _moveSpeed * Time.deltaTime, 1f);
+            _movePhase = Mathf.Repeat(_movePhase + _moveSpeed * delta, 1f);
             var progress = Mathf.PingPong(_movePhase * 2f, 1f);
-            var start = GetSplineEndpoint(_moveSplineContainer, _moveSpline, 0);
-            var end = GetSplineEndpoint(_moveSplineContainer, _moveSpline, _moveSpline.Count - 1);
-            transform.position = Vector3.Lerp(start, end, progress);
+            var localPosition = (Vector3)_moveSpline.EvaluatePosition(progress);
+            transform.position = _moveSplineContainer.transform.TransformPoint(localPosition);
         }
 
         private void LateUpdate()
@@ -104,6 +111,7 @@ namespace Yajima
         {
             _lifeRemaining = _lifeTime;
             _entered = true;
+            _onSpawned?.Invoke();
             OnEntry?.Invoke();
         }
 
@@ -111,6 +119,7 @@ namespace Yajima
         public virtual async void Exit()
         {
             _entered = false;
+            _onDespawned?.Invoke();
             OnExit?.Invoke(this);
         }
 
@@ -120,8 +129,18 @@ namespace Yajima
 
             var turn = Turn(player);
             turn?.OnComplete(Exit);
-            OnInteractedPlayer?.Invoke(_score);
+            NotifyInteraction();
             if (turn == null && isActiveAndEnabled) Exit();
+        }
+
+        protected void NotifyInteraction()
+        {
+            _onInteraction?.Invoke(!IsDecoy);
+            if (!IsDecoy)
+            {
+                OnScoreRequested?.Invoke(_score, transform.position);
+                OnInteractedPlayer?.Invoke(_score);
+            }
         }
 
         protected Tween Turn(Player player)
@@ -136,7 +155,7 @@ namespace Yajima
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!isActiveAndEnabled || IsStopped || _interacted) return;
+            if (!isActiveAndEnabled || IsStopped || !_entered || _interacted) return;
 
             var player = other.GetComponentInParent<Player>();
             if (player == null || !player.IsInteractCollider(other)) return;

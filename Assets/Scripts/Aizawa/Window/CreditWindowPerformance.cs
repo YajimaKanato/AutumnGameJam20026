@@ -17,7 +17,7 @@ namespace Aizawa
 
         private Vector3 _baseScale;
 
-        void Start()
+        void Awake()
         {
             _baseScale = _panel.localScale;
         }
@@ -41,6 +41,7 @@ namespace Aizawa
         public override async UniTask OpenWindow()
         {
             _panel.localScale = Vector3.zero;
+            _panel.gameObject.SetActive(true);
             await _panel.DOScale(_baseScale, _ocSpeed).AsyncWaitForCompletion();
         }
     }

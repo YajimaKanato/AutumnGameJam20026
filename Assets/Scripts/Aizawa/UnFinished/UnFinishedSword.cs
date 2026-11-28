@@ -29,24 +29,25 @@ namespace Aizawa
 
         public override async void InteractExit(Player player)
         {
-            if (IsStopped || _interacted) return;
+            if (IsStopped || !_entered || _interacted) return;
             _entered = false;
-            var col = GetComponent<Collider>();
-            col.isTrigger = true;
 
-            AudioManager.instance.Play("SwordSE");
+            AudioManager.instance?.Play("SwordSE");
             _sword.gameObject.SetActive(true);
             transform.DORotate(new(0, 180, 0), 0.2f);
             _sword.angularVelocity = Random.Range(1, 5) * 200;
-            _sword.linearVelocityY = 10;
-            await UniTask.WaitUntil(() => _sword.transform.position.y < transform.position.y);
+            _sword.linearVelocity = Vector2.up * 10f;
+            if (await UniTask.WaitUntil(() => _sword.transform.position.y < transform.position.y,
+                    cancellationToken: destroyCancellationToken).SuppressCancellationThrow()) return;
             var p = _sword.transform.localPosition;
             p.y = _swordHeight;
             _sword.transform.localPosition = p;
             _sword.transform.localEulerAngles = Vector3.zero;
 
-            col.isTrigger = false;
             _sword.gameObject.SetActive(false);
+
+            if (await UniTask.WaitUntil(() => !IsPaused,
+                    cancellationToken: destroyCancellationToken).SuppressCancellationThrow()) return;
 
             base.InteractExit(player);
         }

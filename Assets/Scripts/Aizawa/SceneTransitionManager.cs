@@ -25,7 +25,6 @@ namespace Aizawa
     public enum Scene
     {
         Title,
-        Movie,
         Ingame,
         Result
     }

@@ -10,6 +10,8 @@ namespace Aizawa
     /// </summary>
     public static class ScoreManager
     {
+        internal const int RankingLimit = 10;
+
         /// <summary> 現在のプレイヤーの名前 </summary>
         public static string CurrentName { get; private set; }
         /// <summary> 最後のプレイでの得点 </summary>
@@ -33,17 +35,12 @@ namespace Aizawa
         /// <returns>登録できたか</returns>
         public static bool SetPlayer(string name)
         {
+            if (string.IsNullOrWhiteSpace(name)) return false;
+            name = name.Trim();
             //ランキングに含まれていた場合省く
             if(_ranking.ContainsKey(name))
             {
                 Debug.Log("その名前は登録済みです。");
-                return false;
-            }
-
-            //名前が空欄か空文字のみでも省く
-            if(string.IsNullOrWhiteSpace(name))
-            {
-                Debug.Log("名前が不正です。");
                 return false;
             }
 
@@ -59,7 +56,7 @@ namespace Aizawa
         /// <param name="score">新スコア</param>
         public static void ReceiveScore(int score)
         {
-            CurrentScore = score;
+            CurrentScore = Mathf.Clamp(score, 0, Yajima.IngameScoreModel.MaxScore);
         }
 
         /// <summary>
@@ -67,8 +64,10 @@ namespace Aizawa
         /// </summary>
         public static void UpdateRanking()
         {
+            if (string.IsNullOrWhiteSpace(CurrentName)) return;
+
             //ランキングに10名以上登録されていて、かつ自身がランキングに入れない場合は省く
-            if(_ranking.Count < 10 || _ranking.Any(r => r.Value <= CurrentScore))
+            if(_ranking.Count < RankingLimit || _ranking.Any(r => r.Value <= CurrentScore))
             {
                 //自身がランキングに登録されていなければ登録
                 if(!_ranking.ContainsKey(CurrentName))
@@ -81,19 +80,7 @@ namespace Aizawa
                 }
 
                 //ランキングを得点の降順にソート
-                _ranking = _ranking.OrderByDescending(r => r.Value).ToDictionary(r => r.Key, r => r.Value);
-
-                //スコアでグループ化
-                var scoreGroup = _ranking.GroupBy(r => r.Value);
-
-                //11個目のグループがあれば、その中身の名前をランキングから全削除
-                if(scoreGroup.Count() > 10)
-                {
-                    foreach(var name in scoreGroup.Last().Select(s => s.Key).ToArray())
-                    {
-                        _ranking.Remove(name);
-                    }
-                }
+                _ranking = _ranking.OrderByDescending(r => r.Value).Take(RankingLimit).ToDictionary(r => r.Key, r => r.Value);
             }
         }
 

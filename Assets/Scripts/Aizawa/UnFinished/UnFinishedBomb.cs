@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Kato;
 using UnityEngine;
@@ -6,46 +5,90 @@ using Yajima;
 
 namespace Aizawa
 {
-    /// <summary>
-    /// 爆弾のやり残しオブジェクト
-    /// </summary>
     public class UnFinishedBomb : Unfinished
     {
-        [SerializeField]
-        private GameObject _debrisAnimator;
+        [SerializeField] GameObject _bombVisual;
+        [SerializeField] SpriteRenderer _front;
+        [SerializeField] SpriteRenderer _back;
+        [SerializeField] SpriteRenderer _debris;
+        [SerializeField] Sprite[] _cutSprites;
+        [SerializeField] Sprite[] _explosionFrames;
+        [SerializeField, Min(1f)] float _explosionFramesPerSecond = 24f;
+
+        Sprite _intactFront;
+        Sprite _intactBack;
+        Tween _effect;
+
+        void Awake()
+        {
+            _intactFront = _front.sprite;
+            _intactBack = _back.sprite;
+        }
 
         public override void Entry()
         {
+            _front.sprite = _intactFront;
+            _back.sprite = _intactBack;
+            _bombVisual.SetActive(true);
+            _debris.gameObject.SetActive(false);
             base.Entry();
         }
 
-        public override void Exit()
+        public override void InteractExit(Player player)
         {
-            base.Exit();
+            if (IsStopped || !_entered || _interacted) return;
+            _entered = false;
+
+            var turn = Turn(player);
+            if (turn == null) PlayOutcome();
+            else turn.OnComplete(PlayOutcome);
         }
 
-        public override async void InteractExit(Player player)
+        void PlayOutcome()
         {
-            if (IsStopped || _interacted) return;
-            _entered = false;
-            var col = GetComponent<Collider>();
-            col.isTrigger = true;
+            if (IsStopped || !isActiveAndEnabled) return;
 
-            if(Random.Range(0, 3) == 1)
+            bool exploded = Random.Range(0, 3) == 1;
+            AudioManager.instance?.Play(exploded ? "BombMissSE" : "BombCutSE");
+
+            if (exploded && _explosionFrames is { Length: > 0 })
             {
-                AudioManager.instance.Play("BombMissSE");
-                _debrisAnimator.SetActive(true);
+                _bombVisual.SetActive(false);
+                _debris.sprite = _explosionFrames[0];
+                _debris.gameObject.SetActive(true);
+                _effect = DOVirtual.Float(0f, _explosionFrames.Length,
+                        _explosionFrames.Length / _explosionFramesPerSecond,
+                        frame => _debris.sprite = _explosionFrames[Mathf.Min((int)frame, _explosionFrames.Length - 1)])
+                    .SetEase(Ease.Linear).OnComplete(FinishInteraction);
+                return;
             }
-            else
+
+            if (!exploded && _cutSprites is { Length: > 0 })
             {
-                AudioManager.instance.Play("BombCutSE");
+                var cutSprite = _cutSprites[Random.Range(0, _cutSprites.Length)];
+                _front.sprite = cutSprite;
+                _back.sprite = cutSprite;
             }
-            await transform.DORotate(new(0, 180, 0), 0.2f).AsyncWaitForCompletion();
-            await UniTask.WaitUntil(() => !_debrisAnimator.activeSelf);
 
-            col.isTrigger = false;
+            _effect = DOVirtual.DelayedCall(0.3f, FinishInteraction, ignoreTimeScale: false);
+        }
 
-            base.InteractExit(player);
+        void FinishInteraction()
+        {
+            _effect = null;
+            NotifyInteraction();
+            if (isActiveAndEnabled) Exit();
+        }
+
+        protected override void OnPaused() => _effect?.Pause();
+        protected override void OnResumed() => _effect?.Play();
+        protected override void OnFinished() => _effect?.Kill();
+
+        protected override void OnDisable()
+        {
+            _effect?.Kill();
+            _effect = null;
+            base.OnDisable();
         }
     }
 }

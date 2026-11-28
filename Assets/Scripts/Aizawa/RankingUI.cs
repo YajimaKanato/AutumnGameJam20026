@@ -22,6 +22,9 @@ namespace Aizawa
         /// </summary>
         public void Open()
         {
+            if (_content == null || _rankingElementPrefab == null) return;
+
+            StopAllCoroutines();
             //現在表示されているランキングをリセットする
             foreach(Transform child in _content)
             {
@@ -37,9 +40,11 @@ namespace Aizawa
         /// </summary>
         IEnumerator SetRankingElements()
         {
-            foreach(var r in ScoreManager.Ranking)
+            var ranking = ScoreManager.Ranking;
+            for (int i = 0; i < ScoreManager.RankingLimit; i++)
             {
-                Instantiate(_rankingElementPrefab, _content).GetComponent<RankingElementUI>().SetRank(r);
+                var entry = i < ranking.Count ? ranking[i] : new RankingElement(i + 1, "---", 0);
+                Instantiate(_rankingElementPrefab, _content).GetComponent<RankingElementUI>()?.SetRank(entry);
                 yield return new WaitForSeconds(_openSpeed);
             }
         }

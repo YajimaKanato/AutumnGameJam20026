@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78f72d39aaaf44b91aa593a62f91066c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Aizawa.ResultManager
-  _rankingUI: {fileID: 0}
-  _resultScoreUI: {fileID: 0}
+  _resultCanvas: {fileID: 0}
   _fadeManager: {fileID: 0}
+  _settings: {fileID: 0}

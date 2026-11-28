@@ -243,7 +243,117 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Menu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                }
+                },
+                {
+  ""name"": ""Arrows"",
+  ""id"": ""7bc29eac-db69-4c06-87c0-2e90ae1d0deb"",
+  ""path"": ""2DVector"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Move"",
+  ""isComposite"": true,
+  ""isPartOfComposite"": false
+},
+                {
+  ""name"": ""up"",
+  ""id"": ""b7895abf-d57d-4527-b2c3-9edc157dbff9"",
+  ""path"": ""<Keyboard>/upArrow"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Move"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": true
+},
+                {
+  ""name"": ""down"",
+  ""id"": ""e410dca0-8b52-4668-b08b-381322bbb8a9"",
+  ""path"": ""<Keyboard>/downArrow"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Move"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": true
+},
+                {
+  ""name"": ""left"",
+  ""id"": ""d0b6b347-4326-4c2b-a297-0aa9a1c8dc8d"",
+  ""path"": ""<Keyboard>/leftArrow"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Move"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": true
+},
+                {
+  ""name"": ""right"",
+  ""id"": ""530684c2-7d27-440c-a652-d8a9eb08ec1c"",
+  ""path"": ""<Keyboard>/rightArrow"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Move"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": true
+},
+                {
+  ""name"": """",
+  ""id"": ""ab831183-572c-491a-b76c-f10f2505643c"",
+  ""path"": ""<Gamepad>/leftStick"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Move"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": false
+},
+                {
+  ""name"": """",
+  ""id"": ""8426ef4b-17fc-41fe-b8c7-9104bf9697eb"",
+  ""path"": ""<Gamepad>/dpad"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Move"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": false
+},
+                {
+  ""name"": """",
+  ""id"": ""87eda737-f53c-4cda-a27f-282182c218bd"",
+  ""path"": ""<Gamepad>/leftShoulder"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""LightMove"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": false
+},
+                {
+  ""name"": """",
+  ""id"": ""9d6c726a-b3f0-4993-af17-1751a1d5f471"",
+  ""path"": ""<Gamepad>/buttonSouth"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Interact"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": false
+},
+                {
+  ""name"": """",
+  ""id"": ""699071b3-485d-49cc-bd3c-ded237174810"",
+  ""path"": ""<Gamepad>/start"",
+  ""interactions"": """",
+  ""processors"": """",
+  ""groups"": """",
+  ""action"": ""Menu"",
+  ""isComposite"": false,
+  ""isPartOfComposite"": false
+}
             ]
         }
     ],

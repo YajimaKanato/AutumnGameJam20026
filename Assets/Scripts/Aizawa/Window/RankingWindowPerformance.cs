@@ -14,10 +14,11 @@ namespace Aizawa
         /// <summary> 開閉速度 </summary>
         [SerializeField]
         private float _ocSpeed;
+        [SerializeField] RankingUI _rankingUI;
 
         private Vector3 _baseScale;
 
-        void Start()
+        void Awake()
         {
             _baseScale = _panel.localScale;
         }
@@ -41,6 +42,8 @@ namespace Aizawa
         public override async UniTask OpenWindow()
         {
             _panel.localScale = Vector3.zero;
+            _panel.gameObject.SetActive(true);
+            _rankingUI?.Open();
             await _panel.DOScale(_baseScale, _ocSpeed).AsyncWaitForCompletion();
         }
     }
