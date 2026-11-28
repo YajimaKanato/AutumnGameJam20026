@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using Yajima;
 using Kato;
+using UnityEngine.InputSystem;
 
 namespace Aizawa
 {
@@ -16,15 +17,29 @@ namespace Aizawa
         [SerializeField] WindowPerformance _creditWindow;
         [SerializeField] WindowPerformance _rankingWindow;
         [SerializeField] FadeManager _fadeManager;
+        bool _transitioning;
 
-        private async void Awake()
+        private void Awake()
         {
-            await _fadeManager.FadeIn();
+            if (_nameField != null)
+                _nameField.onValidateInput = ValidateNameCharacter;
         }
 
-        void Start()
+        private static char ValidateNameCharacter(string text, int index, char character)
         {
-            AudioManager.instance.Play("TitleBGM");
+            char uppercase = char.ToUpperInvariant(character);
+            return uppercase >= 'A' && uppercase <= 'Z' ? uppercase : '\0';
+        }
+
+        private async void Start()
+        {
+            _transitioning = true;
+            AudioManager.instance?.Play("TitleBGM");
+            if (_optionWindow != null) await _optionWindow.CloseWindow();
+            if (_creditWindow != null) await _creditWindow.CloseWindow();
+            if (_rankingWindow != null) await _rankingWindow.CloseWindow();
+            if (_fadeManager != null) await _fadeManager.FadeIn(destroyCancellationToken);
+            _transitioning = false;
         }
 
         /// <summary>
@@ -32,34 +47,47 @@ namespace Aizawa
         /// </summary>
         public async void StartGame()
         {
-            if (ScoreManager.SetPlayer(_nameField.text))
+            if (_transitioning || _nameField == null) return;
+            if (!ScoreManager.SetPlayer(_nameField.text.Trim()))
             {
-                await _fadeManager.FadeOut();
-                await SceneTransitionManager.TransitionScene(Scene.Ingame);
+                _nameField.ActivateInputField();
+                return;
             }
+
+            _transitioning = true;
+            if (_fadeManager != null) await _fadeManager.FadeOut(destroyCancellationToken);
+            await SceneTransitionManager.TransitionScene(Scene.Ingame);
         }
 
-        public async void OperationOptionWindow(bool isOpen)
+        private void Update()
+        {
+            if (_optionWindow is OptionWindow settings && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
+                OperationOptionWindow(!settings.PanelIsOpen);
+        }
+
+        public void OperationOptionWindow(bool isOpen)
         {
             OperationWindow(_optionWindow, isOpen);
         }
 
-        public async void OperationCreditWindow(bool isOpen)
+        public void OperationCreditWindow(bool isOpen)
         {
             OperationWindow(_creditWindow, isOpen);
         }
 
-        public async void OperationRankingWindow(bool isOpen)
+        public void OperationRankingWindow(bool isOpen)
         {
             OperationWindow(_rankingWindow, isOpen);
         }
 
-        void OperationWindow(WindowPerformance window, bool isOpen)
+        async void OperationWindow(WindowPerformance window, bool isOpen)
         {
+            if (_transitioning || window == null) return;
+
             if (isOpen)
-                window?.OpenWindow();
+                await window.OpenWindow();
             else
-                window?.CloseWindow();
+                await window.CloseWindow();
         }
     }
 }

@@ -11,11 +11,13 @@ namespace Yajima
         [SerializeField] Sprite _normalTank;
         [SerializeField] Sprite _warningTank;
         [SerializeField] Sprite _criticalTank;
+        [SerializeField] Sprite _criticalEventTank;
         [SerializeField, Min(0f)] float _fillDuration = 0.1f;
 
         float _targetEnergy;
         float _fillVelocity;
         int _band = -1;
+        bool _criticalEventActive;
         Tween _tankEffect;
         Vector2 _tankPosition;
         Vector3 _tankScale;
@@ -59,9 +61,6 @@ namespace Yajima
                     _initialTank = _tankImage.sprite;
                 }
 
-                var sprite = band == 2 ? _normalTank : band == 1 ? _warningTank : _criticalTank;
-                _tankImage.sprite = sprite != null ? sprite : _initialTank;
-
                 if (_band >= 0)
                 {
                     ResetTankEffect();
@@ -76,6 +75,23 @@ namespace Yajima
             }
 
             _band = band;
+            UpdateTankSprite();
+        }
+
+        public void SetCriticalCondition(bool active)
+        {
+            _criticalEventActive = active;
+            if (_band >= 0) UpdateTankSprite();
+        }
+
+        void UpdateTankSprite()
+        {
+            if (_tankImage == null) return;
+
+            var sprite = _band == 2 ? _normalTank : _band == 1 ? _warningTank : _criticalTank;
+            if (_criticalEventActive && _criticalEventTank != null)
+                sprite = _criticalEventTank;
+            _tankImage.sprite = sprite != null ? sprite : _initialTank;
         }
 
         private void LateUpdate()

@@ -29,6 +29,8 @@ namespace Aizawa
         /// </summary>
         public void Open()
         {
+            StopAllCoroutines();
+            _showedDigits = 0;
             //スコアをchar配列にして、桁進め用のコルーチンを走らせる
             _scoreChars = ScoreManager.CurrentScore.ToString().ToCharArray();
             StartCoroutine(DigitStep());

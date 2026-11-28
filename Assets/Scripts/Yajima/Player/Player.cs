@@ -16,6 +16,7 @@ namespace Yajima
         [SerializeField] float _interactScale = 1.0f;
         [SerializeField] Collider _interactCollider;
         [SerializeField] PaperPuppet _paperPuppet;
+        [SerializeField] PlayerCamera _playerCamera;
         PlayerInput _input;
         InputAction _move;
         InputAction _interact;
@@ -36,6 +37,7 @@ namespace Yajima
         public ReadOnlyReactiveProperty<bool> OpenedMenu => _openedMenu;
 
         public bool IsFacingRight => _playerForward > 0f;
+        internal PlayerCamera FollowCamera => _playerCamera;
 
         public bool IsInteractCollider(Collider collider)
         {
@@ -62,7 +64,8 @@ namespace Yajima
             {
                 _interactCollider.enabled = false;
                 _interactCollider.isTrigger = true;
-                ((BoxCollider)_interactCollider).size = new Vector3(1, 0.1f, 1) * _interactScale;
+                if (_interactCollider is BoxCollider hitbox)
+                    hitbox.size = new Vector3(_interactScale, hitbox.size.y, _interactScale);
             }
 
             _isPause = false;
@@ -156,6 +159,8 @@ namespace Yajima
             if (IngameManager.HasStarted && !IsFinished && _menu.WasPressedThisFrame())
                 _openedMenu.Value = !_openedMenu.Value;
         }
+
+        public void CloseMenu() => _openedMenu.Value = false;
         #endregion
 
         #region Move
@@ -163,6 +168,15 @@ namespace Yajima
         {
             // 光速移動かどうかで速度変える
             var velocity = _direction * (_lightMoved.Value ? _lightMoveSpeed : _speed);
+            if (_playerCamera != null)
+            {
+                var position = _playerCamera.ClampPlayerPosition(_rb.position);
+                if (position != _rb.position) _rb.position = position;
+
+                float step = Time.fixedDeltaTime;
+                var next = _playerCamera.ClampPlayerPosition(position + velocity * step);
+                velocity = (next - position) / step;
+            }
             velocity.y = _rb.linearVelocity.y;
             _rb.linearVelocity = velocity;
         }

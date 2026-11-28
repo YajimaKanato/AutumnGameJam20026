@@ -19,8 +19,13 @@ namespace Aizawa
         {
             _text = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             _text.gameObject.SetActive(false);
-            GetComponent<Image>().sprite = _rankFrames[element.rank - 1];
-            _text.text = $"{element.score}p : {element.name}";
+            int frameIndex = element.rank - 1;
+            var image = GetComponent<Image>();
+            if (image != null && _rankFrames != null && frameIndex >= 0 && frameIndex < _rankFrames.Length
+                && _rankFrames[frameIndex] != null)
+                image.sprite = _rankFrames[frameIndex];
+            _text.richText = false;
+            _text.text = $"{element.rank}. {element.name}  {element.score:N0}点";
 
             //回転させる
             transform.localEulerAngles = new(-180, 0, 0);
@@ -30,7 +35,7 @@ namespace Aizawa
         void Update()
         {
             //90度になったらテキストを表示
-            if(!_text.gameObject.activeSelf && transform.localEulerAngles.x >= -90)
+            if (_text != null && !_text.gameObject.activeSelf && Mathf.Abs(Mathf.DeltaAngle(0f, transform.localEulerAngles.x)) <= 90f)
             {
                 _text.gameObject.SetActive(true);
             }

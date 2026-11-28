@@ -31,7 +31,8 @@ namespace Aizawa
         void Start()
         {
             _button = GetComponent<Button>();
-            _button.onClick.AddListener(() => AudioManager.instance.Play("ButtonSE"));
+            _button.onClick.AddListener(() => AudioManager.instance?.Play("ButtonSE"));
+            if (TryGetComponent<ButtonHoverAnimation>(out _)) return;
 
             //画像をアサインする
             _button.transition = Selectable.Transition.SpriteSwap;
@@ -45,6 +46,8 @@ namespace Aizawa
 
         void Update()
         {
+            if (_button.transition != Selectable.Transition.SpriteSwap) return;
+
             //キーボード選択モードのみ
             if(_isKeyboardControlle)
             {

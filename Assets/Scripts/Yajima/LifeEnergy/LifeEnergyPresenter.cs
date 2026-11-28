@@ -42,7 +42,11 @@ namespace Yajima
             Depleted?.Invoke();
         }
 
-        public void SetCriticalCondition(bool active) => _criticalCondition = active;
+        public void SetCriticalCondition(bool active)
+        {
+            _criticalCondition = active;
+            _view?.SetCriticalCondition(active);
+        }
 
         public void OnUnfinishedResolved(int score)
         {
